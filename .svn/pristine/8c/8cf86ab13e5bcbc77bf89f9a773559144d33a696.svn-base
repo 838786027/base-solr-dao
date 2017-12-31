@@ -1,0 +1,48 @@
+package com.gosun.solr.query.result;
+
+import java.util.List;
+
+/**
+ * 分组查询 单个分组的结果集
+ * @author cxp
+ *
+ * @param <T> 实体类型
+ */
+public class GroupElementQueryResult<T> {
+	/**
+	 * 分组值
+	 */
+	private String groupValue;
+	/**
+	 * 一个分组内匹配到的DO实体集合
+	 */
+	private List<T> groupBeans;
+	/**
+	 * 一个分组内匹配到的总数
+	 */
+	private long groupAmounts;
+	public String getGroupValue() {
+		return groupValue;
+	}
+	public void setGroupValue(String groupValue) {
+		this.groupValue = groupValue;
+	}
+	public List<T> getGroupBeans() {
+		return groupBeans;
+	}
+	public void setGroupBeans(List<T> groupBeans) {
+		this.groupBeans = groupBeans;
+	}
+	public long getGroupAmounts() {
+		return groupAmounts;
+	}
+	public void setGroupAmounts(long groupAmounts) {
+		this.groupAmounts = groupAmounts;
+	}
+	@Override
+	public String toString() {
+		return "GroupElementQueryResult [groupValue=" + groupValue
+				+ ", groupBeans=" + groupBeans + ", groupAmounts="
+				+ groupAmounts + "]";
+	}
+}

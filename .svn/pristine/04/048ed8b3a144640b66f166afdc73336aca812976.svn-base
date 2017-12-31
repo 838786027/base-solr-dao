@@ -1,0 +1,42 @@
+package com.gosun.solr.query.result;
+
+import java.util.List;
+
+/**
+ * 构面查询结果集
+ * @author caixiaopeng
+ *
+ */
+public class FacetQueryResult {
+
+	/**
+	 * 用于构面的域
+	 */
+	private String facetField;
+	
+	private List<FacetElementQueryResult> elements;
+
+	public String getFacetField() {
+		return facetField;
+	}
+
+	public FacetQueryResult setFacetField(String facetField) {
+		this.facetField = facetField;
+		return this;
+	}
+
+	public List<FacetElementQueryResult> getElements() {
+		return elements;
+	}
+
+	public FacetQueryResult setElements(List<FacetElementQueryResult> elements) {
+		this.elements = elements;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "FacetQueryResult [facetField=" + facetField + ", elements=" + elements + "]";
+	}
+	
+}

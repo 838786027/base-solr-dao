@@ -1,0 +1,58 @@
+0.0.1
+新功能（0）：
+优化（0）：
+修复BUG（0）：
+其他改变（0）：
+
+0.0.2
+新功能（4）：
+	1.SolrQueryParam添加solr的fl参数
+	2.BaseSolrDao增加使用Date类型字段的构面查询的方法 listDateFacet
+		(SolrQueryFacetParam增加使用Date类型字段的构面查询所需要设置的参数dateFacet、dateFacetStart、dateFacetEnd、dateFacetGap)
+	3.BaseSolrDao增加使用FacetQuery自定义条件查询的方法 listQueryFacet
+		(SolrQueryFacetParam增加使用FacetQuery自定义条件查询所需要设置的参数facetQueryList)
+	4.BaseSolrDao增加使用FacetPivot进行深度构面查询的方法 listPivotFacet
+		(SolrQueryFacetParam增加使用FacetPivot进行深度构面查询所需要设置的参数facetPivot、facetPivotMinCount)
+优化（8）：
+	1.BaseSolrDao读取配置文件支持路径优先
+ 		当前目录下的/config目录 >
+    	当前目录 >
+    	classpath里的/config目录 >
+    	classpath 根目录
+	2.Solr请求方式改为POST
+	3.将原本构面查询返回的Map修改为FacetQueryResult和FacetElementQueryResult
+		统一返回结果集，针对确定类编程，而不是对Map这种不确定集合编程
+	4.所有查询结果集添加合适的toString方法
+	5.BaseSolrDao所有查询支持DEBUG输出参数和返回值
+	6.构面查询，默认设置rows为0，限制document返回，降低网络压力
+	7.SolrServerFactory加入synchronized，成为线程安全类
+	8.BaseSolrDao可以直接通过输入solrCloudUrl、solrCollection、solrHostUrl进行实例化
+修复BUG（4）：
+	1.update，save，saveAll方法没有进行数据转换
+	2.SolrDateUtils.range(String startDateStr,String endDateStr,DateFormat dateFormat,boolean isIncludeBorder)
+		旧：当startDateStr或者endDateStr为null时，会抛出空指针异常
+		新：当startDateStr或者endDateStr为null时，用*替代
+	3.SolrRangeUtils.range(Object start,Object end,boolean isIncludeBorder)
+		旧：当start或者end为null时，会拼接成[null TO null]或者[null TO *]或者[* TO null]
+		新：当start或者end为null时，拼接成[* TO xxx]或者[xxx TO *]或者[* TO *]
+	4.BaseSolrDao.listGroupToGroupQueryResult或者listGroup对于日期数据转换器，转换异常
+其他改变（0）：
+
+0.0.3
+新功能（0）：
+优化（1）：
+	1.打开Solr连接时，输出提示信息
+修复BUG（0）：
+其他改变（0）：
+
+1.0.0
+新功能（1）：
+	1.添加字段默认值设置
+优化（5）：
+	1.修改注解位置，现在统一使用@Extra
+	2.SolrQueryFacetParam结构优化
+	3.facet查询接口提供方式优化
+	4.优化查询参数类名（com.gosun.solr.query.param）
+	5.查询添加耗时debug输出
+修复BUG（0）：
+其他改变（0）：

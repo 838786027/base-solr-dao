@@ -1,0 +1,78 @@
+package com.gosun.solr.query.param;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.common.params.GroupParams;
+
+import com.gosun.solr.query.ExtendedSortClause;
+
+/**
+ * Solr分组查询参数实体
+ * 
+ * @author cxp
+ *
+ */
+public class SolrQueryGroupParam extends SolrQueryParam{
+	/**
+	 * 分组域列表
+	 * 注意：Solr分组不支持多域组成一个分组。多域只能生成多个分组。
+	 */
+	private List<String> groupFieldList=new LinkedList<String>();
+	/**
+	 * 分组组内结果集的数量的上限
+	 */
+	private int groupLimit=-1;
+	/**
+	 * 分组组内结果集的排序方式
+	 */
+	private ExtendedSortClause groupSort;
+	
+	@Override
+	public void setSolrQueryParam(SolrQuery solrQuery){
+		assert solrQuery!=null;
+		
+		super.setSolrQueryParam(solrQuery);
+		solrQuery.setParam(GroupParams.GROUP, true);
+		solrQuery.setParam(GroupParams.GROUP_FIELD, groupFieldList.toArray(new String[groupFieldList.size()]));
+		if(groupLimit>=0){
+			solrQuery.setParam(GroupParams.GROUP_LIMIT, ""+groupLimit);
+		}
+		//设置组内排序
+		if(groupSort!=null&&StringUtils.isNotBlank(groupSort.value())){
+			solrQuery.setParam(GroupParams.GROUP_SORT, groupSort.value());
+		}
+	}
+	
+	public List<String> getGroupFieldList() {
+		return groupFieldList;
+	}
+	public SolrQueryGroupParam addGroupField(String groupField) {
+		this.groupFieldList.add(groupField);
+		return this;
+	}
+	public int getGroupLimit() {
+		return groupLimit;
+	}
+	public SolrQueryGroupParam setGroupLimit(int groupLimit) {
+		this.groupLimit = groupLimit;
+		return this;
+	}
+	public ExtendedSortClause getGroupSort() {
+		return groupSort;
+	}
+	public SolrQueryGroupParam setGroupSort(ExtendedSortClause groupSort) {
+		this.groupSort = groupSort;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString()+"\r\nSolrQueryGroupParam =>"
+				+ "\r\n\tgroupFieldList=" + groupFieldList
+				+ "\r\n\tgroupLimit=" + groupLimit 
+				+ "\r\n\tgroupSort=" + groupSort;
+	}
+}

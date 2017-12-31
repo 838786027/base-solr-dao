@@ -1,0 +1,131 @@
+package com.gosun.solr.query.param;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.common.params.CommonParams;
+
+import com.gosun.solr.query.ExtendedSortClause;
+
+/**
+ * Solr基本查询参数实体
+ * 
+ * @author cxp
+ *
+ */
+public class SolrCommonParam {
+	/**
+	 * 查询条件q
+	 */
+	private String q;
+	/**
+	 * 结果集的起始位置
+	 * 小于0为无效值
+	 */
+	private int start=-1;
+	/**
+	 * 结果集的数量的上限
+	 * 小于0为无效值
+	 */
+	private int rows=-1;
+	/**
+	 * 过滤查询的field，类似sql的select语句
+	 * eg. time
+	 * eg. time plate id
+	 */
+	private String fl;
+	/**
+	 * 结果集的排序方式
+	 */
+	private ExtendedSortClause sort;
+	
+	/**
+	 * 为SolrQuery设置相应属性
+	 * @author cxp
+	 * @param solrQuery
+	 */
+	public void setSolrQueryParam(SolrQuery solrQuery){
+		assert solrQuery!=null;
+		
+		if(StringUtils.isNotBlank(q)){
+			solrQuery.setQuery(q);
+		}
+		if(start>=0){
+			solrQuery.setStart(start);
+		}
+		if(rows>=0){
+			solrQuery.setRows(rows);
+		}
+		if(sort!=null){
+			solrQuery.setSort(sort);
+		}
+		if(StringUtils.isNotBlank(fl)){
+			solrQuery.set(CommonParams.FL, fl);
+		}
+	}
+	
+	/*------------------------
+	 * getter/setter
+	 *-----------------------*/
+	public String getQ() {
+		return q;
+	}
+	public SolrCommonParam setQ(String q) {
+		this.q = q;
+		return this;
+	}
+	public int getStart() {
+		return start;
+	}
+	public SolrCommonParam setStart(int start) {
+		this.start = start;
+		return this;
+	}
+	public int getRows() {
+		return rows;
+	}
+	public SolrCommonParam setRows(int rows) {
+		this.rows = rows;
+		return this;
+	}
+	public ExtendedSortClause getSort() {
+		return sort;
+	}
+	public SolrCommonParam setSort(ExtendedSortClause sort) {
+		this.sort = sort;
+		return this;
+	}
+	public SolrCommonParam setSort(String sortField,String sortType){
+		assert sortField!=null
+				&sortType!=null;
+		
+		ORDER order=ORDER.desc;
+		if("asc".equals(sortType.toLowerCase())){
+			order=ORDER.asc;
+		}
+		this.sort=new ExtendedSortClause(sortField, order);
+		return this;
+	}
+	public String getFl() {
+		return fl;
+	}
+
+	public void setFl(String fl) {
+		this.fl = fl;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SolrCommonParam [");
+		if (q != null)
+			builder.append("q=").append(q).append(", ");
+		builder.append("start=").append(start).append(", rows=").append(rows).append(", ");
+		if (fl != null)
+			builder.append("fl=").append(fl).append(", ");
+		if (sort != null)
+			builder.append("sort=").append(sort);
+		builder.append("]");
+		return builder.toString();
+	}
+}

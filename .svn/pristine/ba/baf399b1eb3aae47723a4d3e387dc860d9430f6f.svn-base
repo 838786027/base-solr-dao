@@ -1,0 +1,2 @@
+solr.zk.host=master:2181,slave1:2181,slave2:2181/solr
+solr.zk.default.collection=picrecord

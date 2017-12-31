@@ -1,0 +1,111 @@
+package com.gosun.solr.query.param;
+
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.common.params.FacetParams;
+
+import com.gosun.solr.query.ExtendedSortClause;
+import com.gosun.solr.query.condition.SolrDateUtils;
+
+/**
+ * Solr构面查询参数实体
+ * 
+ * @author caixiaopeng
+ * 
+ */
+public abstract class AbstractSolrFacetParam {
+	private String q="*:*";
+	/**
+	 * 组成构面的最少数量，当组成一个构面的元素数量少于该数时，则忽略这个构面 
+	 * ps.小于0为无效值
+	 */
+	private int facetMinCount = -1;
+	/**
+	 * 构面的起始位置 
+	 * ps.小于0为无效值
+	 */
+	private int facetStart = -1;
+	/**
+	 * 构面数量的上限
+	 * 默认值为100 
+	 * ps.负数代表无限制
+	 */
+	private int facetRows = 100;
+	/**
+	 * 构面间的排序
+	 */
+	private ExtendedSortClause facetSort;
+
+	public void setSolrQueryParam(SolrQuery solrQuery) {
+		solrQuery.setFacet(true);
+		solrQuery.setQuery(q);
+		solrQuery.setRows(0); // 限制document返回，降低网络压力
+		if (facetMinCount >= 0) {
+			solrQuery.setFacetMinCount(facetMinCount);
+		}
+		if (facetStart >= 0) {
+			solrQuery.set(FacetParams.FACET_OFFSET, facetStart);
+		}
+		solrQuery.setFacetLimit(facetRows);
+		if (facetSort != null && StringUtils.isNotBlank(facetSort.value())) {
+			solrQuery.setFacetSort(facetSort.value());
+		}
+	}
+
+	/*------------------------
+	 * getter/setter
+	 *-----------------------*/
+	public String getQ() {
+		return q;
+	}
+	public AbstractSolrFacetParam setQ(String q) {
+		this.q = q;
+		return this;
+	}
+	public int getFacetMinCount() {
+		return facetMinCount;
+	}
+	public AbstractSolrFacetParam setFacetMinCount(int facetMinCount) {
+		this.facetMinCount = facetMinCount;
+		return this;
+	}
+	public int getFacetStart() {
+		return facetStart;
+	}
+	public AbstractSolrFacetParam setFacetStart(int facetStart) {
+		this.facetStart = facetStart;
+		return this;
+	}
+	public int getFacetRows() {
+		return facetRows;
+	}
+	public AbstractSolrFacetParam setFacetRows(int facetRows) {
+		this.facetRows = facetRows;
+		return this;
+	}
+	public ExtendedSortClause getFacetSort() {
+		return facetSort;
+	}
+	public AbstractSolrFacetParam setFacetSort(ExtendedSortClause facetSort) {
+		this.facetSort = facetSort;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AbstractSolrFacetParam [");
+		if (q != null)
+			builder.append("q=").append(q).append(", ");
+		builder.append("facetMinCount=").append(facetMinCount).append(", facetStart=").append(facetStart)
+				.append(", facetRows=").append(facetRows).append(", ");
+		if (facetSort != null)
+			builder.append("facetSort=").append(facetSort);
+		builder.append("]");
+		return builder.toString();
+	}
+}

@@ -1,0 +1,248 @@
+package com.gosun.solr.query.param;
+
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.common.params.FacetParams;
+
+import com.gosun.solr.query.ExtendedSortClause;
+import com.gosun.solr.query.condition.SolrDateUtils;
+
+/**
+ * Solr构面查询参数实体
+ * 
+ * @author cxp
+ * 
+ */
+public class SolrQueryFacetParam extends SolrQueryParam {
+	/**
+	 * 组成构面的最少数量，当组成一个构面的元素数量少于该数时，则忽略这个构面 
+	 * ps.小于0为无效值
+	 */
+	private int facetMinCount = -1;
+	/**
+	 * 构面的起始位置 
+	 * ps.小于0为无效值
+	 */
+	private int facetStart = -1;
+	/**
+	 * 构面数量的上限，默认值为100 
+	 * ps.负数代表无限制
+	 */
+	private int facetRows = 100;
+	/**
+	 * 构面域列表 
+	 * 注意：Solr构面不支持多域组成一个构面。多域只能生成多个构面。
+	 */
+	private List<String> facetFieldList = new LinkedList<String>();
+	/**
+	 * 使用FacetQuery自定义查询的条件 
+	 * 注意：可以有多个自定义查询的条件
+	 */
+	private List<String> facetQueryList =new LinkedList<String>();
+	/**
+	 * Date类型字段构面
+	 */
+	private String dateFacet;
+	/**
+	 * Date类型字段构面的起始时间
+	 */
+	private Date dateFacetStart;
+	/**
+	 * Date类型字段构面的结束时间
+	 */
+	private Date dateFacetEnd;
+	/**
+	 * Date类型字段构面的间隔时间
+	 * eg.+1DAY
+	 */
+	private String dateFacetGap;
+	/**
+	 * 深度构面
+	 * ps.目前只支持多域深度构面
+	 */
+	private String facetPivot;
+	/**
+	 * 深度构面，最小值
+	 * ps.小于0为无效值
+	 */
+	private int facetPivotMinCount=-1;
+	/**
+	 * 构面间的排序
+	 */
+	private ExtendedSortClause facetSort;
+
+	@Override
+	public void setSolrQueryParam(SolrQuery solrQuery) {
+		assert solrQuery != null;
+
+		super.setSolrQueryParam(solrQuery);
+		solrQuery.setFacet(true);
+		if (facetMinCount >= 0) {
+			solrQuery.setFacetMinCount(facetMinCount);
+		}
+		if (facetStart >= 0) {
+			solrQuery.set(FacetParams.FACET_OFFSET, facetStart);
+		}
+		solrQuery.setFacetLimit(facetRows);
+		if (facetFieldList.size() > 0) {
+			solrQuery.addFacetField(facetFieldList
+					.toArray(new String[facetFieldList.size()]));
+		}
+		if(facetQueryList.size() > 0){
+			for(String facetQuery :facetQueryList){
+				solrQuery.addFacetQuery(facetQuery);
+			}
+		}
+		if(StringUtils.isNotBlank(dateFacet)){
+			solrQuery.set(FacetParams.FACET_DATE, dateFacet);
+		}
+		if(dateFacetStart!=null){
+			solrQuery.set(FacetParams.FACET_DATE_START, SolrDateUtils.getSolrDate(dateFacetStart));
+		}
+		if(dateFacetEnd!=null){
+			solrQuery.set(FacetParams.FACET_DATE_END, SolrDateUtils.getSolrDate(dateFacetEnd));
+		}
+		if(StringUtils.isNotBlank(dateFacetGap)){
+			solrQuery.set(FacetParams.FACET_DATE_GAP, dateFacetGap);
+		}
+		if (facetSort != null && StringUtils.isNotBlank(facetSort.value())) {
+			solrQuery.setFacetSort(facetSort.value());
+		}
+		if(StringUtils.isNotBlank(facetPivot)){
+			solrQuery.set(FacetParams.FACET_PIVOT, facetPivot);
+		}
+		if(facetPivotMinCount>=0){
+			solrQuery.set(FacetParams.FACET_PIVOT_MINCOUNT, facetPivotMinCount);
+		}
+
+	}
+
+	public int getFacetMinCount() {
+		return facetMinCount;
+	}
+
+	public SolrQueryFacetParam setFacetMinCount(int facetMinCount) {
+		this.facetMinCount = facetMinCount;
+		return this;
+	}
+
+	public int getFacetStart() {
+		return facetStart;
+	}
+
+	public SolrQueryFacetParam setFacetStart(int facetStart) {
+		this.facetStart = facetStart;
+		return this;
+	}
+
+	public int getFacetRows() {
+		return facetRows;
+	}
+
+	public SolrQueryFacetParam setFacetRows(int facetRows) {
+		this.facetRows = facetRows;
+		return this;
+	}
+
+	public List<String> getFacetFieldList() {
+		return facetFieldList;
+	}
+
+	public SolrQueryFacetParam addFacetField(String facetField) {
+		this.facetFieldList.add(facetField);
+		return this;
+	}
+
+	public String getDateFacet() {
+		return dateFacet;
+	}
+
+	public SolrQueryFacetParam setDateFacet(String dateFacet) {
+		this.dateFacet = dateFacet;
+		return this;
+	}
+
+	public Date getDateFacetStart() {
+		return dateFacetStart;
+	}
+
+	public SolrQueryFacetParam setDateFacetStart(Date dateFacetStart) {
+		this.dateFacetStart = dateFacetStart;
+		return this;
+	}
+
+	public Date getDateFacetEnd() {
+		return dateFacetEnd;
+	}
+
+	public SolrQueryFacetParam setDateFacetEnd(Date dateFacetEnd) {
+		this.dateFacetEnd = dateFacetEnd;
+		return this;
+	}
+
+	public String getDateFacetGap() {
+		return dateFacetGap;
+	}
+
+	public SolrQueryFacetParam setDateFacetGap(String dateFacetGap) {
+		this.dateFacetGap = dateFacetGap;
+		return this;
+	}
+	
+	public List<String> getFacetQueryList() {
+		return facetQueryList;
+	}
+
+	public SolrQueryFacetParam addFacetQuery(String facetQuery) {
+		this.facetQueryList.add(facetQuery);
+		return this;
+	}
+
+	public ExtendedSortClause getFacetSort() {
+		return facetSort;
+	}
+
+	public SolrQueryFacetParam setFacetSort(ExtendedSortClause facetSort) {
+		this.facetSort = facetSort;
+		return this;
+	}
+	
+	public String getFacetPivot() {
+		return facetPivot;
+	}
+
+	public SolrQueryFacetParam setFacetPivot(String facetPivot) {
+		this.facetPivot = facetPivot;
+		return this;
+	}
+
+	public int getFacetPivotMinCount() {
+		return facetPivotMinCount;
+	}
+
+	public SolrQueryFacetParam setFacetPivotMinCount(int facetPivotMinCount) {
+		this.facetPivotMinCount = facetPivotMinCount;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "\r\nSolrQueryFacetParam =>"
+				+ "\r\n\tfacetMinCount=" + facetMinCount
+				+ "\r\n\tfacetStart=" + facetStart 
+				+ "\r\n\tfacetRows=" + facetRows
+				+ "\r\n\tfacetFieldList=" + facetFieldList 
+				+ "\r\n\tfacetQueryList=" + facetQueryList 
+				+ "\r\n\tdateFacet=" + dateFacet
+				+ "\r\n\tdateFacetStart=" + dateFacetStart 
+				+ "\r\n\tdateFacetEnd=" + dateFacetEnd 
+				+ "\r\n\tdateFacetGap=" + dateFacetGap
+				+ "\r\n\tfacetSort=" + facetSort
+				+ "\r\n\tfacetPivot=" + facetPivot
+				+ "\r\n\tfacetPivotMinCount=" + facetPivotMinCount;
+	}
+}

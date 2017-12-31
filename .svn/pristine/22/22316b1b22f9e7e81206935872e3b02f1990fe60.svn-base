@@ -1,0 +1,49 @@
+package com.gosun.solr.query.param;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.solr.client.solrj.SolrQuery;
+
+/**
+ * 查询构面参数
+ * @author caixiaopeng
+ *
+ */
+public class SolrFacetQueryParam extends AbstractSolrFacetParam{
+	/**
+	 * 使用FacetQuery自定义查询的条件 
+	 * 注意：可以有多个自定义查询的条件
+	 */
+	private List<String> facetQueries =new LinkedList<String>();
+
+	@Override
+	public void setSolrQueryParam(SolrQuery solrQuery) {
+		super.setSolrQueryParam(solrQuery);
+		if(facetQueries.size() > 0){
+			for(String facetQuery :facetQueries){
+				solrQuery.addFacetQuery(facetQuery);
+			}
+		}
+	}
+
+	public List<String> getFacetQueries() {
+		return facetQueries;
+	}
+	public SolrFacetQueryParam addFacetQuery(String facetQuery) {
+		this.facetQueries.add(facetQuery);
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SolrFacetQueryParam [");
+		if (facetQueries != null)
+			builder.append("facetQueries=").append(facetQueries).append(", ");
+		if (super.toString() != null)
+			builder.append("toString()=").append(super.toString());
+		builder.append("]");
+		return builder.toString();
+	}
+}
